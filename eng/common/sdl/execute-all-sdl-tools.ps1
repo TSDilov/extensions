@@ -7,6 +7,7 @@ Param(
   [string] $SourceDirectory=$env:BUILD_SOURCESDIRECTORY,                                         # Required: the directory where source files are located
   [string] $ArtifactsDirectory = (Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY ('artifacts')),  # Required: the directory where build artifacts are located
   [string] $AzureDevOpsAccessToken,                                                              # Required: access token for dnceng; should be provided via KeyVault
+<<<<<<< HEAD
 
   # Optional: list of SDL tools to run on source code. See 'configure-sdl-tool.ps1' for tools list
   # format.
@@ -18,6 +19,10 @@ Param(
   # 'configure-sdl-tool.ps1' for tools list format.
   [object[]] $CustomToolsList,
 
+=======
+  [string[]] $SourceToolsList,                                                                   # Optional: list of SDL tools to run on source code
+  [string[]] $ArtifactToolsList,                                                                 # Optional: list of SDL tools to run on built artifacts
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   [bool] $TsaPublish=$False,                                                                     # Optional: true will publish results to TSA; only set to true after onboarding to TSA; TSA is the automated framework used to upload test results as bugs.
   [string] $TsaBranchName=$env:BUILD_SOURCEBRANCH,                                               # Optional: required for TSA publish; defaults to $(Build.SourceBranchName); TSA is the automated framework used to upload test results as bugs.
   [string] $TsaRepositoryName=$env:BUILD_REPOSITORY_NAME,                                        # Optional: TSA repository name; will be generated automatically if not submitted; TSA is the automated framework used to upload test results as bugs.
@@ -34,8 +39,11 @@ Param(
   [string] $GuardianLoggerLevel='Standard',                                                      # Optional: the logger level for the Guardian CLI; options are Trace, Verbose, Standard, Warning, and Error
   [string[]] $CrScanAdditionalRunConfigParams,                                                   # Optional: Additional Params to custom build a CredScan run config in the format @("xyz:abc","sdf:1")
   [string[]] $PoliCheckAdditionalRunConfigParams,                                                # Optional: Additional Params to custom build a Policheck run config in the format @("xyz:abc","sdf:1")
+<<<<<<< HEAD
   [string[]] $CodeQLAdditionalRunConfigParams,                                                   # Optional: Additional Params to custom build a Semmle/CodeQL run config in the format @("xyz < abc","sdf < 1")
   [string[]] $BinskimAdditionalRunConfigParams,                                                  # Optional: Additional Params to custom build a Binskim run config in the format @("xyz < abc","sdf < 1")
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   [bool] $BreakOnFailure=$False                                                                  # Optional: Fail the build if there were errors during the run
 )
 
@@ -43,7 +51,11 @@ try {
   $ErrorActionPreference = 'Stop'
   Set-StrictMode -Version 2.0
   $disableConfigureToolsetImport = $true
+<<<<<<< HEAD
   $global:LASTEXITCODE = 0
+=======
+  $LASTEXITCODE = 0
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
   # `tools.ps1` checks $ci to perform some actions. Since the SDL
   # scripts don't necessarily execute in the same agent that run the
@@ -74,16 +86,25 @@ try {
     ExitWithExitCode 1
   }
 
+<<<<<<< HEAD
   Exec-BlockVerbosely {
     & $(Join-Path $PSScriptRoot 'init-sdl.ps1') -GuardianCliLocation $guardianCliLocation -Repository $RepoName -BranchName $BranchName -WorkingDirectory $workingDirectory -AzureDevOpsAccessToken $AzureDevOpsAccessToken -GuardianLoggerLevel $GuardianLoggerLevel
   }
+=======
+  & $(Join-Path $PSScriptRoot 'init-sdl.ps1') -GuardianCliLocation $guardianCliLocation -Repository $RepoName -BranchName $BranchName -WorkingDirectory $workingDirectory -AzureDevOpsAccessToken $AzureDevOpsAccessToken -GuardianLoggerLevel $GuardianLoggerLevel
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   $gdnFolder = Join-Path $workingDirectory '.gdn'
 
   if ($TsaOnboard) {
     if ($TsaCodebaseName -and $TsaNotificationEmail -and $TsaCodebaseAdmin -and $TsaBugAreaPath) {
+<<<<<<< HEAD
       Exec-BlockVerbosely {
         & $guardianCliLocation tsa-onboard --codebase-name "$TsaCodebaseName" --notification-alias "$TsaNotificationEmail" --codebase-admin "$TsaCodebaseAdmin" --instance-url "$TsaInstanceUrl" --project-name "$TsaProjectName" --area-path "$TsaBugAreaPath" --iteration-path "$TsaIterationPath" --working-directory $workingDirectory --logger-level $GuardianLoggerLevel
       }
+=======
+      Write-Host "$guardianCliLocation tsa-onboard --codebase-name `"$TsaCodebaseName`" --notification-alias `"$TsaNotificationEmail`" --codebase-admin `"$TsaCodebaseAdmin`" --instance-url `"$TsaInstanceUrl`" --project-name `"$TsaProjectName`" --area-path `"$TsaBugAreaPath`" --iteration-path `"$TsaIterationPath`" --working-directory $workingDirectory --logger-level $GuardianLoggerLevel"
+      & $guardianCliLocation tsa-onboard --codebase-name "$TsaCodebaseName" --notification-alias "$TsaNotificationEmail" --codebase-admin "$TsaCodebaseAdmin" --instance-url "$TsaInstanceUrl" --project-name "$TsaProjectName" --area-path "$TsaBugAreaPath" --iteration-path "$TsaIterationPath" --working-directory $workingDirectory --logger-level $GuardianLoggerLevel
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       if ($LASTEXITCODE -ne 0) {
         Write-PipelineTelemetryError -Force -Category 'Sdl' -Message "Guardian tsa-onboard failed with exit code $LASTEXITCODE."
         ExitWithExitCode $LASTEXITCODE
@@ -94,6 +115,7 @@ try {
     }
   }
 
+<<<<<<< HEAD
   # Configure a list of tools with a default target directory. Populates the ".gdn/r" directory.
   function Configure-ToolsList([object[]] $tools, [string] $targetDirectory) {
     if ($tools -and $tools.Count -gt 0) {
@@ -131,6 +153,17 @@ try {
       -WorkingDirectory $SourceDirectory `
       -UpdateBaseline $UpdateBaseline `
       -GdnFolder $gdnFolder
+=======
+  if ($ArtifactToolsList -and $ArtifactToolsList.Count -gt 0) {
+    & $(Join-Path $PSScriptRoot 'run-sdl.ps1') -GuardianCliLocation $guardianCliLocation -WorkingDirectory $workingDirectory -TargetDirectory $ArtifactsDirectory -GdnFolder $gdnFolder -ToolsList $ArtifactToolsList -AzureDevOpsAccessToken $AzureDevOpsAccessToken -UpdateBaseline $UpdateBaseline -GuardianLoggerLevel $GuardianLoggerLevel -CrScanAdditionalRunConfigParams $CrScanAdditionalRunConfigParams -PoliCheckAdditionalRunConfigParams $PoliCheckAdditionalRunConfigParams
+  }
+  if ($SourceToolsList -and $SourceToolsList.Count -gt 0) {
+    & $(Join-Path $PSScriptRoot 'run-sdl.ps1') -GuardianCliLocation $guardianCliLocation -WorkingDirectory $workingDirectory -TargetDirectory $SourceDirectory -GdnFolder $gdnFolder -ToolsList $SourceToolsList -AzureDevOpsAccessToken $AzureDevOpsAccessToken -UpdateBaseline $UpdateBaseline -GuardianLoggerLevel $GuardianLoggerLevel -CrScanAdditionalRunConfigParams $CrScanAdditionalRunConfigParams -PoliCheckAdditionalRunConfigParams $PoliCheckAdditionalRunConfigParams
+  }
+
+  if ($UpdateBaseline) {
+    & (Join-Path $PSScriptRoot 'push-gdn.ps1') -Repository $RepoName -BranchName $BranchName -GdnFolder $GdnFolder -AzureDevOpsAccessToken $AzureDevOpsAccessToken -PushReason 'Update baseline'
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   }
 
   if ($TsaPublish) {
@@ -138,9 +171,14 @@ try {
       if (-not $TsaRepositoryName) {
         $TsaRepositoryName = "$($Repository)-$($BranchName)"
       }
+<<<<<<< HEAD
       Exec-BlockVerbosely {
         & $guardianCliLocation tsa-publish --all-tools --repository-name "$TsaRepositoryName" --branch-name "$TsaBranchName" --build-number "$BuildNumber" --onboard $True --codebase-name "$TsaCodebaseName" --notification-alias "$TsaNotificationEmail" --codebase-admin "$TsaCodebaseAdmin" --instance-url "$TsaInstanceUrl" --project-name "$TsaProjectName" --area-path "$TsaBugAreaPath" --iteration-path "$TsaIterationPath" --working-directory $workingDirectory  --logger-level $GuardianLoggerLevel
       }
+=======
+      Write-Host "$guardianCliLocation tsa-publish --all-tools --repository-name `"$TsaRepositoryName`" --branch-name `"$TsaBranchName`" --build-number `"$BuildNumber`" --codebase-name `"$TsaCodebaseName`" --notification-alias `"$TsaNotificationEmail`" --codebase-admin `"$TsaCodebaseAdmin`" --instance-url `"$TsaInstanceUrl`" --project-name `"$TsaProjectName`" --area-path `"$TsaBugAreaPath`" --iteration-path `"$TsaIterationPath`" --working-directory $workingDirectory --logger-level $GuardianLoggerLevel"
+      & $guardianCliLocation tsa-publish --all-tools --repository-name "$TsaRepositoryName" --branch-name "$TsaBranchName" --build-number "$BuildNumber" --onboard $True --codebase-name "$TsaCodebaseName" --notification-alias "$TsaNotificationEmail" --codebase-admin "$TsaCodebaseAdmin" --instance-url "$TsaInstanceUrl" --project-name "$TsaProjectName" --area-path "$TsaBugAreaPath" --iteration-path "$TsaIterationPath" --working-directory $workingDirectory  --logger-level $GuardianLoggerLevel
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       if ($LASTEXITCODE -ne 0) {
         Write-PipelineTelemetryError -Force -Category 'Sdl' -Message "Guardian tsa-publish failed with exit code $LASTEXITCODE."
         ExitWithExitCode $LASTEXITCODE
@@ -153,11 +191,15 @@ try {
 
   if ($BreakOnFailure) {
     Write-Host "Failing the build in case of breaking results..."
+<<<<<<< HEAD
     Exec-BlockVerbosely {
       & $guardianCliLocation break --working-directory $workingDirectory --logger-level $GuardianLoggerLevel
     }
   } else {
     Write-Host "Letting the build pass even if there were breaking results..."
+=======
+    & $guardianCliLocation break
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   }
 }
 catch {

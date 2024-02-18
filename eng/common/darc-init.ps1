@@ -1,6 +1,10 @@
 param (
     $darcVersion = $null,
+<<<<<<< HEAD
     $versionEndpoint = 'https://maestro.dot.net/api/assets/darc-version?api-version=2019-01-16',
+=======
+    $versionEndpoint = 'https://maestro-prod.westus2.cloudapp.azure.com/api/assets/darc-version?api-version=2019-01-16',
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     $verbosity = 'minimal',
     $toolpath = $null
 )

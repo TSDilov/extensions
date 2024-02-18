@@ -8,4 +8,8 @@ deb http://ports.ubuntu.com/ubuntu-ports/ xenial-backports main restricted
 deb-src http://ports.ubuntu.com/ubuntu-ports/ xenial-backports main restricted
 
 deb http://ports.ubuntu.com/ubuntu-ports/ xenial-security main restricted universe multiverse
+<<<<<<< HEAD
 deb-src http://ports.ubuntu.com/ubuntu-ports/ xenial-security main restricted universe multiverse
+=======
+deb-src http://ports.ubuntu.com/ubuntu-ports/ xenial-security main restricted universe multiverse
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

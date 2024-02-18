@@ -34,7 +34,11 @@ function Print-Usage() {
 function Build([string]$target) {
   $logSuffix = if ($target -eq 'Execute') { '' } else { ".$target" }
   $log = Join-Path $LogDir "$task$logSuffix.binlog"
+<<<<<<< HEAD
   $outputPath = Join-Path $ToolsetDir "$task\"
+=======
+  $outputPath = Join-Path $ToolsetDir "$task\\"
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
   MSBuild $taskProject `
     /bl:$log `
@@ -53,7 +57,11 @@ try {
   }
 
   if ($task -eq "") {
+<<<<<<< HEAD
     Write-PipelineTelemetryError -Category 'Build' -Message "Missing required parameter '-task <value>'"
+=======
+    Write-PipelineTelemetryError -Category 'Build' -Message "Missing required parameter '-task <value>'" -ForegroundColor Red
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     Print-Usage
     ExitWithExitCode 1
   }
@@ -64,7 +72,11 @@ try {
       $GlobalJson.tools | Add-Member -Name "vs" -Value (ConvertFrom-Json "{ `"version`": `"16.5`" }") -MemberType NoteProperty
     }
     if( -not ($GlobalJson.tools.PSObject.Properties.Name -match "xcopy-msbuild" )) {
+<<<<<<< HEAD
       $GlobalJson.tools | Add-Member -Name "xcopy-msbuild" -Value "17.8.1-2" -MemberType NoteProperty
+=======
+      $GlobalJson.tools | Add-Member -Name "xcopy-msbuild" -Value "16.8.0-preview3" -MemberType NoteProperty
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     }
     if ($GlobalJson.tools."xcopy-msbuild".Trim() -ine "none") {
         $xcopyMSBuildToolsFolder = InitializeXCopyMSBuild $GlobalJson.tools."xcopy-msbuild" -install $true
@@ -78,7 +90,11 @@ try {
 
   $taskProject = GetSdkTaskProject $task
   if (!(Test-Path $taskProject)) {
+<<<<<<< HEAD
     Write-PipelineTelemetryError -Category 'Build' -Message "Unknown task: $task"
+=======
+    Write-PipelineTelemetryError -Category 'Build' -Message "Unknown task: $task" -ForegroundColor Red
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     ExitWithExitCode 1
   }
 

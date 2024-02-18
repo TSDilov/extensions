@@ -52,6 +52,7 @@ done
 # Use uname to determine what the CPU is, see https://en.wikipedia.org/wiki/Uname#Examples
 cpuname=$(uname -m)
 case $cpuname in
+<<<<<<< HEAD
   arm64|aarch64)
     buildarch=arm64
     if [ "$(getconf LONG_BIT)" -lt 64 ]; then
@@ -61,6 +62,10 @@ case $cpuname in
     ;;
   loongarch64)
     buildarch=loongarch64
+=======
+  aarch64)
+    buildarch=arm64
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     ;;
   amd64|x86_64)
     buildarch=x64
@@ -68,7 +73,11 @@ case $cpuname in
   armv*l)
     buildarch=arm
     ;;
+<<<<<<< HEAD
   i[3-6]86)
+=======
+  i686)
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     buildarch=x86
     ;;
   *)
@@ -77,7 +86,11 @@ case $cpuname in
     ;;
 esac
 
+<<<<<<< HEAD
 dotnetRoot="${repo_root}.dotnet"
+=======
+dotnetRoot="$repo_root/.dotnet"
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 if [[ $architecture != "" ]] && [[ $architecture != $buildarch ]]; then
   dotnetRoot="$dotnetRoot/$architecture"
 fi

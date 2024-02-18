@@ -35,11 +35,16 @@ try {
     param( 
       [string] $PackagePath                                 # Full path to a NuGet package
     )
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     if (!(Test-Path $PackagePath)) {
       Write-PipelineTelemetryError -Category 'Build' -Message "Input file does not exist: $PackagePath"
       ExitWithExitCode 1
     }
+<<<<<<< HEAD
 
     $RelevantExtensions = @('.dll', '.exe', '.pdb')
     Write-Host -NoNewLine 'Extracting ' ([System.IO.Path]::GetFileName($PackagePath)) '...'
@@ -51,17 +56,36 @@ try {
 
     [System.IO.Directory]::CreateDirectory($ExtractPath);
 
+=======
+    
+    $RelevantExtensions = @('.dll', '.exe', '.pdb')
+    Write-Host -NoNewLine 'Extracting ' ([System.IO.Path]::GetFileName($PackagePath)) '...'
+  
+    $PackageId = [System.IO.Path]::GetFileNameWithoutExtension($PackagePath)
+    $ExtractPath = Join-Path -Path $using:ExtractPath -ChildPath $PackageId
+  
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+  
+    [System.IO.Directory]::CreateDirectory($ExtractPath);
+  
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     try {
       $zip = [System.IO.Compression.ZipFile]::OpenRead($PackagePath)
   
       $zip.Entries | 
       Where-Object {$RelevantExtensions -contains [System.IO.Path]::GetExtension($_.Name)} |
         ForEach-Object {
+<<<<<<< HEAD
             $TargetPath = Join-Path -Path $ExtractPath -ChildPath (Split-Path -Path $_.FullName)
             [System.IO.Directory]::CreateDirectory($TargetPath);
 
             $TargetFile = Join-Path -Path $ExtractPath -ChildPath $_.FullName
             [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $TargetFile)
+=======
+            $TargetFile = Join-Path -Path $ExtractPath -ChildPath $_.Name
+  
+            [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $TargetFile, $true)
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
           }
     }
     catch {

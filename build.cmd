@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 @ECHO OFF
 
 SET _args=%*
@@ -11,3 +12,8 @@ IF ["%_args%"] == [""] (
 
 powershell -ExecutionPolicy ByPass -NoProfile -command "& """%~dp0eng\build.ps1""" %_args%"
 EXIT /b %ERRORLEVEL%
+=======
+@echo off
+powershell -ExecutionPolicy ByPass -NoProfile -command "& """%~dp0eng\common\Build.ps1""" -build -restore -pack %*"
+exit /b %ErrorLevel%
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

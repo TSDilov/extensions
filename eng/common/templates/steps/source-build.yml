@@ -18,6 +18,7 @@ steps:
     set -x
     df -h
 
+<<<<<<< HEAD
     # If building on the internal project, the artifact feeds variable may be available (usually only if needed)
     # In that case, call the feed setup script to add internal feeds corresponding to public ones.
     # In addition, add an msbuild argument to copy the WIP from the repo to the target build location.
@@ -47,6 +48,8 @@ steps:
       internalRuntimeDownloadArgs='/p:DotNetRuntimeSourceFeed=https://dotnetbuilds.blob.core.windows.net/internal /p:DotNetRuntimeSourceFeedKey=$(dotnetbuilds-internal-container-read-token-base64) --runtimesourcefeed https://dotnetbuilds.blob.core.windows.net/internal --runtimesourcefeedkey $(dotnetbuilds-internal-container-read-token-base64)'
     fi
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     buildConfig=Release
     # Check if AzDO substitutes in a build config from a variable, and use it if so.
     if [ '$(_BuildConfig)' != '$''(_BuildConfig)' ]; then
@@ -63,6 +66,7 @@ steps:
       targetRidArgs='/p:TargetRid=${{ parameters.platform.targetRID }}'
     fi
 
+<<<<<<< HEAD
     runtimeOsArgs=
     if [ '${{ parameters.platform.runtimeOS }}' != '' ]; then
       runtimeOsArgs='/p:RuntimeOS=${{ parameters.platform.runtimeOS }}'
@@ -95,6 +99,15 @@ steps:
       /p:SourceBuildNonPortable=${{ parameters.platform.nonPortable }} \
       /p:ArcadeBuildFromSource=true \
       /p:AssetManifestFileName=$assetManifestFileName
+=======
+    ${{ coalesce(parameters.platform.buildScript, './build.sh') }} --ci \
+      --configuration $buildConfig \
+      --restore --build --pack --publish \
+      $officialBuildArgs \
+      $targetRidArgs \
+      /p:SourceBuildNonPortable=${{ parameters.platform.nonPortable }} \
+      /p:ArcadeBuildFromSource=true
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   displayName: Build
 
 # Upload build logs for diagnosis.
@@ -118,6 +131,7 @@ steps:
     artifactName: BuildLogs_SourceBuild_${{ parameters.platform.name }}_Attempt$(System.JobAttempt)
   continueOnError: true
   condition: succeededOrFailed()
+<<<<<<< HEAD
 
 # Manually inject component detection so that we can ignore the source build upstream cache, which contains
 # a nupkg cache of input packages (a local feed).
@@ -127,3 +141,5 @@ steps:
   displayName: Component Detection (Exclude upstream cache)
   inputs:
     ignoreDirectories: '$(Build.SourcesDirectory)/artifacts/source-build/self/src/artifacts/obj/source-built-upstream-cache'
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

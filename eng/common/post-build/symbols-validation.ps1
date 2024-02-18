@@ -1,4 +1,5 @@
 param(
+<<<<<<< HEAD
   [Parameter(Mandatory = $true)][string] $InputPath, # Full path to directory where NuGet packages to be checked are stored
   [Parameter(Mandatory = $true)][string] $ExtractPath, # Full path to directory where the packages will be extracted during validation
   [Parameter(Mandatory = $true)][string] $DotnetSymbolVersion, # Version of dotnet symbol to use
@@ -11,6 +12,17 @@ param(
 . $PSScriptRoot\..\tools.ps1
 # Maximum number of jobs to run in parallel
 $MaxParallelJobs = 16
+=======
+  [Parameter(Mandatory=$true)][string] $InputPath,              # Full path to directory where NuGet packages to be checked are stored
+  [Parameter(Mandatory=$true)][string] $ExtractPath,            # Full path to directory where the packages will be extracted during validation
+  [Parameter(Mandatory=$true)][string] $DotnetSymbolVersion,    # Version of dotnet symbol to use
+  [Parameter(Mandatory=$false)][switch] $ContinueOnError,       # If we should keep checking symbols after an error
+  [Parameter(Mandatory=$false)][switch] $Clean                  # Clean extracted symbols directory after checking symbols
+)
+
+# Maximum number of jobs to run in parallel
+$MaxParallelJobs = 6
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
 # Max number of retries
 $MaxRetry = 5
@@ -22,6 +34,7 @@ $SecondsBetweenLoadChecks = 10
 Set-Variable -Name "ERROR_BADEXTRACT" -Option Constant -Value -1
 Set-Variable -Name "ERROR_FILEDOESNOTEXIST" -Option Constant -Value -2
 
+<<<<<<< HEAD
 $WindowsPdbVerificationParam = ""
 if ($CheckForWindowsPdbs) {
   $WindowsPdbVerificationParam = "--windows-pdbs"
@@ -49,6 +62,15 @@ $CountMissingSymbols = {
     [string] $WindowsPdbVerificationParam # If we should check for the existence of windows pdbs in addition to portable PDBs
   )
 
+=======
+$CountMissingSymbols = {
+  param( 
+    [string] $PackagePath          # Path to a NuGet package
+  )
+
+  . $using:PSScriptRoot\..\tools.ps1
+
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   Add-Type -AssemblyName System.IO.Compression.FileSystem
 
   Write-Host "Validating $PackagePath "
@@ -57,7 +79,11 @@ $CountMissingSymbols = {
   if (!(Test-Path $PackagePath)) {
     Write-PipelineTaskError "Input file does not exist: $PackagePath"
     return [pscustomobject]@{
+<<<<<<< HEAD
       result      = $using:ERROR_FILEDOESNOTEXIST
+=======
+      result = $using:ERROR_FILEDOESNOTEXIST
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       packagePath = $PackagePath
     }
   }
@@ -80,12 +106,17 @@ $CountMissingSymbols = {
     Write-Host "Something went wrong extracting $PackagePath"
     Write-Host $_
     return [pscustomobject]@{
+<<<<<<< HEAD
       result      = $using:ERROR_BADEXTRACT
+=======
+      result = $using:ERROR_BADEXTRACT
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       packagePath = $PackagePath
     }
   }
 
   Get-ChildItem -Recurse $ExtractPath |
+<<<<<<< HEAD
   Where-Object { $RelevantExtensions -contains $_.Extension } |
   ForEach-Object {
     $FileName = $_.FullName
@@ -99,6 +130,20 @@ $CountMissingSymbols = {
         [string] $FullPath, # Full path to the module that has to be checked
         [string] $TargetServerParam, # Parameter to pass to `Symbol Tool` indicating the server to lookup for symbols
         [string] $WindowsPdbVerificationParam, # Parameter to pass to potential check for windows-pdbs.
+=======
+    Where-Object {$RelevantExtensions -contains $_.Extension} |
+    ForEach-Object {
+      $FileName = $_.FullName
+      if ($FileName -Match '\\ref\\') {
+        Write-Host "`t Ignoring reference assembly file " $FileName
+        return
+      }
+
+      $FirstMatchingSymbolDescriptionOrDefault = {
+      param( 
+        [string] $FullPath,                  # Full path to the module that has to be checked
+        [string] $TargetServerParam,         # Parameter to pass to `Symbol Tool` indicating the server to lookup for symbols
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
         [string] $SymbolsPath
       )
 
@@ -123,13 +168,18 @@ $CountMissingSymbols = {
 
       # DWARF file for a .dylib
       $DylibDwarf = $SymbolPath.Replace($Extension, '.dylib.dwarf')
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       $dotnetSymbolExe = "$env:USERPROFILE\.dotnet\tools"
       $dotnetSymbolExe = Resolve-Path "$dotnetSymbolExe\dotnet-symbol.exe"
 
       $totalRetries = 0
 
       while ($totalRetries -lt $using:MaxRetry) {
+<<<<<<< HEAD
 
         # Save the output and get diagnostic output
         $output = & $dotnetSymbolExe --symbols --modules $WindowsPdbVerificationParam $TargetServerParam $FullPath -o $SymbolsPath --diagnostics | Out-String
@@ -145,19 +195,46 @@ $CountMissingSymbols = {
         }  
         elseif ((Test-Path $DylibDwarf) -and (Test-Path $SymbolPath)) {
           return 'Dylib and Dwarf for Dylib'
+=======
+        # Save the output and get diagnostic output
+        $output = & $dotnetSymbolExe --symbols --modules --windows-pdbs $TargetServerParam $FullPath -o $SymbolsPath --diagnostics | Out-String
+
+        if (Test-Path $PdbPath) {
+          return 'PDB'
+        }
+        elseif (Test-Path $NGenPdb) {
+          return 'NGen PDB'
+        }
+        elseif (Test-Path $SODbg) {
+          return 'DBG for SO'
+        }  
+        elseif (Test-Path $DylibDwarf) {
+          return 'Dwarf for Dylib'
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
         }  
         elseif (Test-Path $SymbolPath) {
           return 'Module'
         }
+<<<<<<< HEAD
         else
         {
           $totalRetries++
         }
+=======
+        elseif ($output.Contains("503 Service Unavailable")) {
+          # If we got a 503 error, we should retry.
+          $totalRetries++
+        }
+        else {
+          return $null
+        }
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       }
       
       return $null
     }
 
+<<<<<<< HEAD
     $FileRelativePath = $FileName.Replace("$ExtractPath\", "")
     if (($($using:ExclusionSet) -ne $null) -and ($($using:ExclusionSet).Contains($FileRelativePath) -or ($($using:ExclusionSet).Contains($FileRelativePath.Replace("\", "/"))))){
       Write-Host "Skipping $FileName from symbol validation"
@@ -177,6 +254,10 @@ $CountMissingSymbols = {
           -TargetServerParam '--internal-server' `
           -SymbolsPath "$ExpandedSymbolsPath-symweb" `
           -WindowsPdbVerificationParam $WindowsPdbVerificationParam
+=======
+      $SymbolsOnMSDL = & $FirstMatchingSymbolDescriptionOrDefault $FileName '--microsoft-symbol-server' $SymbolsPath
+      $SymbolsOnSymWeb = & $FirstMatchingSymbolDescriptionOrDefault $FileName '--internal-server' $SymbolsPath
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
       Write-Host -NoNewLine "`t Checking file " $FileName "... "
   
@@ -199,7 +280,10 @@ $CountMissingSymbols = {
         }
       }
     }
+<<<<<<< HEAD
   }
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   
   if ($using:Clean) {
     Remove-Item $ExtractPath -Recurse -Force
@@ -208,6 +292,7 @@ $CountMissingSymbols = {
   Pop-Location
 
   return [pscustomobject]@{
+<<<<<<< HEAD
     result      = $MissingSymbols
     packagePath = $PackagePath
   }
@@ -218,6 +303,18 @@ function CheckJobResult(
   $packagePath,
   [ref]$DupedSymbols,
   [ref]$TotalFailures) {
+=======
+      result = $MissingSymbols
+      packagePath = $PackagePath
+    }
+}
+
+function CheckJobResult(
+    $result, 
+    $packagePath,
+    [ref]$DupedSymbols,
+    [ref]$TotalFailures) {
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   if ($result -eq $ERROR_BADEXTRACT) {
     Write-PipelineTelemetryError -Category 'CheckSymbols' -Message "$packagePath has duplicated symbol files"
     $DupedSymbols.Value++
@@ -240,7 +337,10 @@ function CheckSymbolsAvailable {
     Remove-Item $ExtractPath -Force  -Recurse -ErrorAction SilentlyContinue
   }
 
+<<<<<<< HEAD
   $TotalPackages = 0
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   $TotalFailures = 0
   $DupedSymbols = 0
 
@@ -263,9 +363,13 @@ function CheckSymbolsAvailable {
         return
       }
 
+<<<<<<< HEAD
       $TotalPackages++
 
       Start-Job -ScriptBlock $CountMissingSymbols -ArgumentList @($FullName,$WindowsPdbVerificationParam) | Out-Null
+=======
+      Start-Job -ScriptBlock $CountMissingSymbols -ArgumentList $FullName | Out-Null
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
       $NumJobs = @(Get-Job -State 'Running').Count
 
@@ -290,11 +394,19 @@ function CheckSymbolsAvailable {
 
   if ($TotalFailures -gt 0 -or $DupedSymbols -gt 0) {
     if ($TotalFailures -gt 0) {
+<<<<<<< HEAD
       Write-PipelineTelemetryError -Category 'CheckSymbols' -Message "Symbols missing for $TotalFailures/$TotalPackages packages"
     }
 
     if ($DupedSymbols -gt 0) {
       Write-PipelineTelemetryError -Category 'CheckSymbols' -Message "$DupedSymbols/$TotalPackages packages had duplicated symbol files and could not be extracted"
+=======
+      Write-PipelineTelemetryError -Category 'CheckSymbols' -Message "Symbols missing for $TotalFailures packages"
+    }
+
+    if ($DupedSymbols -gt 0) {
+      Write-PipelineTelemetryError -Category 'CheckSymbols' -Message "$DupedSymbols packages had duplicated symbol files"
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     }
     
     ExitWithExitCode 1

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
   <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
@@ -111,4 +112,78 @@
   <Import Project="$(MSBuildThisFileDirectory)\eng\MSBuild\LegacySupport.props" />
   <Import Project="$(MSBuildThisFileDirectory)\eng\MSBuild\Shared.props" />
   <Import Project="$(MSBuildThisFileDirectory)\eng\MSBuild\Generators.props" />
+=======
+<Project>
+  <PropertyGroup>
+    <RepoRoot>$(MSBuildThisFileDirectory)</RepoRoot>
+    <RepositoryUrl>https://github.com/dotnet/extensions</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepoRelativeProjectDir>$([MSBuild]::MakeRelative($(RepoRoot), $(MSBuildProjectDirectory)))</RepoRelativeProjectDir>
+
+    <!-- Set these before importing Arcade to override Arcade's defaults -->
+    <IsUnitTestProject>false</IsUnitTestProject>
+    <IsUnitTestProject Condition="$(MSBuildProjectName.EndsWith('.Tests')) OR $(MSBuildProjectName.EndsWith('.FunctionalTests'))">true</IsUnitTestProject>
+    <IsUnitTestProject Condition="$(MSBuildProjectName.EndsWith('.Specification.Tests'))">false</IsUnitTestProject>
+
+    <IsBenchmarkProject Condition="$(MSBuildProjectName.EndsWith('.Performance'))">true</IsBenchmarkProject>
+    <IsTestAssetProject Condition="$(RepoRelativeProjectDir.Contains('testassets'))">true</IsTestAssetProject>
+    <IsSampleProject Condition="$(RepoRelativeProjectDir.Contains('samples'))">true</IsSampleProject>
+
+
+    <ExcludeFromSourceBuild Condition="'$(IsUnitTestProject)' == 'true' or '$(IsBenchmarkProject)' == 'true' or '$(IsTestAssetProject)' == 'true' or '$(IsSampleProject)' == 'true'">true</ExcludeFromSourceBuild>
+  </PropertyGroup>
+
+  <Import Project="eng\FlakyTests.BeforeArcade.props" />
+  <Import Project="Sdk.props" Sdk="Microsoft.DotNet.Arcade.Sdk" />
+  <Import Project="eng\FlakyTests.AfterArcade.props" />
+
+  <PropertyGroup>
+    <IncludeSymbols>true</IncludeSymbols>
+    <!-- Always pass portable to override arcade sdk which uses embedded for local builds -->
+    <DebugType>portable</DebugType>
+    <Serviceable Condition="'$(Configuration)' == 'Release'">true</Serviceable>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://asp.net</PackageProjectUrl>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <LangVersion>8.0</LangVersion>
+
+    <DefaultNetCoreTargetFramework>net5.0</DefaultNetCoreTargetFramework>
+
+    <Product>Microsoft .NET Extensions</Product>
+    <SignAssembly>true</SignAssembly>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!-- Enables Strict mode for Roslyn compiler -->
+    <Features>strict</Features>
+
+    <!-- Automatically generate source for .resx files on-build. -->
+    <GenerateResxSource>true</GenerateResxSource>
+    <GenerateResxSourceEmitFormatMethods>true</GenerateResxSourceEmitFormatMethods>
+
+    <StrongNameKeyId>MicrosoftAspNetCore</StrongNameKeyId>
+    <SharedSourceRoot>$(MSBuildThisFileDirectory)src\Shared\src\</SharedSourceRoot>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(IsUnitTestProject)' == 'true' ">
+    <ProjectReference Include="$(MSBuildThisFileDirectory)src\TestingUtils\Microsoft.AspNetCore.Testing\src\Microsoft.AspNetCore.Testing.csproj" />
+    <Reference Include="Moq" />
+    <!-- Bring in the latest NETStandard.Library to avoid too many package references from
+         Moq & xunit's dependencies -->
+    <Reference Include="NETStandard.Library" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup Condition=" '$(IsUnitTestProject)' == 'true' ">
+    <!-- Always copy content items in test projects into the build output directory. -->
+    <Content>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemDefinitionGroup>
+
+  <ItemGroup Condition="'$(DotNetBuildFromSource)' != 'true'">
+    <Reference Include="Microsoft.DotNet.GenAPI" Version="$(MicrosoftDotNetGenApiPackageVersion)" PrivateAssets="All" />
+  </ItemGroup>
+
+  <Import Project="eng\Dependencies.props" />
+  <Import Project="eng\ProjectReferences.props" />
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 </Project>

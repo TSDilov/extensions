@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+<<<<<<< HEAD
   <PropertyGroup>
     <PublishingVersion>3</PublishingVersion>
   </PropertyGroup>
 </Project>
+=======
+   <PropertyGroup>
+      <PublishingVersion>3</PublishingVersion>
+   </PropertyGroup>
+</Project>
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

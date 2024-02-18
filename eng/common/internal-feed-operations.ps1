@@ -45,11 +45,19 @@ function SetupCredProvider {
   # Then, we set the 'VSS_NUGET_EXTERNAL_FEED_ENDPOINTS' environment variable to restore from the stable 
   # feeds successfully
 
+<<<<<<< HEAD
   $nugetConfigPath = Join-Path $RepoRoot "NuGet.config"
 
   if (-Not (Test-Path -Path $nugetConfigPath)) {
     Write-PipelineTelemetryError -Category 'Build' -Message 'NuGet.config file not found in repo root!'
     ExitWithExitCode 1
+=======
+  $nugetConfigPath = "$RepoRoot\NuGet.config"
+
+  if (-Not (Test-Path -Path $nugetConfigPath)) {
+    Write-PipelineTelemetryError -Category 'Build' -Message 'NuGet.config file not found in repo root!'
+    ExitWithExitCode 1  
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   }
   
   $endpoints = New-Object System.Collections.ArrayList
@@ -85,7 +93,11 @@ function SetupCredProvider {
 
 #Workaround for https://github.com/microsoft/msbuild/issues/4430
 function InstallDotNetSdkAndRestoreArcade {
+<<<<<<< HEAD
   $dotnetTempDir = Join-Path $RepoRoot "dotnet"
+=======
+  $dotnetTempDir = "$RepoRoot\dotnet"
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   $dotnetSdkVersion="2.1.507" # After experimentation we know this version works when restoring the SDK (compared to 3.0.*)
   $dotnet = "$dotnetTempDir\dotnet.exe"
   $restoreProjPath = "$PSScriptRoot\restore.proj"

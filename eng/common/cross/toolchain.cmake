@@ -1,5 +1,6 @@
 set(CROSS_ROOTFS $ENV{ROOTFS_DIR})
 
+<<<<<<< HEAD
 # reset platform variables (e.g. cmake 3.25 sets LINUX=1)
 unset(LINUX)
 unset(FREEBSD)
@@ -31,6 +32,26 @@ elseif(EXISTS ${CROSS_ROOTFS}/android_platform)
 endif()
 
 if(TARGET_ARCH_NAME STREQUAL "arm")
+=======
+set(TARGET_ARCH_NAME $ENV{TARGET_BUILD_ARCH})
+if(EXISTS ${CROSS_ROOTFS}/bin/freebsd-version)
+  set(CMAKE_SYSTEM_NAME FreeBSD)
+elseif(EXISTS ${CROSS_ROOTFS}/usr/platform/i86pc)
+  set(CMAKE_SYSTEM_NAME SunOS)
+  set(ILLUMOS 1)
+else()
+  set(CMAKE_SYSTEM_NAME Linux)
+endif()
+set(CMAKE_SYSTEM_VERSION 1)
+
+if(TARGET_ARCH_NAME STREQUAL "armel")
+  set(CMAKE_SYSTEM_PROCESSOR armv7l)
+  set(TOOLCHAIN "arm-linux-gnueabi")
+  if("$ENV{__DistroRid}" MATCHES "tizen.*")
+    set(TIZEN_TOOLCHAIN "armv7l-tizen-linux-gnueabi/9.2.0")
+  endif()
+elseif(TARGET_ARCH_NAME STREQUAL "arm")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   set(CMAKE_SYSTEM_PROCESSOR armv7l)
   if(EXISTS ${CROSS_ROOTFS}/usr/lib/gcc/armv7-alpine-linux-musleabihf)
     set(TOOLCHAIN "armv7-alpine-linux-musleabihf")
@@ -39,13 +60,17 @@ if(TARGET_ARCH_NAME STREQUAL "arm")
   else()
     set(TOOLCHAIN "arm-linux-gnueabihf")
   endif()
+<<<<<<< HEAD
   if(TIZEN)
     set(TIZEN_TOOLCHAIN "armv7hl-tizen-linux-gnueabihf/9.2.0")
   endif()
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 elseif(TARGET_ARCH_NAME STREQUAL "arm64")
   set(CMAKE_SYSTEM_PROCESSOR aarch64)
   if(EXISTS ${CROSS_ROOTFS}/usr/lib/gcc/aarch64-alpine-linux-musl)
     set(TOOLCHAIN "aarch64-alpine-linux-musl")
+<<<<<<< HEAD
   elseif(LINUX)
     set(TOOLCHAIN "aarch64-linux-gnu")
     if(TIZEN)
@@ -116,6 +141,28 @@ elseif(TARGET_ARCH_NAME STREQUAL "x86")
   endif()
 else()
   message(FATAL_ERROR "Arch is ${TARGET_ARCH_NAME}. Only arm, arm64, armel, armv6, ppc64le, riscv64, s390x, x64 and x86 are supported!")
+=======
+  else()
+    set(TOOLCHAIN "aarch64-linux-gnu")
+  endif()
+  if("$ENV{__DistroRid}" MATCHES "tizen.*")
+    set(TIZEN_TOOLCHAIN "aarch64-tizen-linux-gnu/9.2.0")
+  endif()
+elseif(TARGET_ARCH_NAME STREQUAL "s390x")
+  set(CMAKE_SYSTEM_PROCESSOR s390x)
+  set(TOOLCHAIN "s390x-linux-gnu")
+elseif(TARGET_ARCH_NAME STREQUAL "x86")
+  set(CMAKE_SYSTEM_PROCESSOR i686)
+  set(TOOLCHAIN "i686-linux-gnu")
+elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+  set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+  set(triple "x86_64-unknown-freebsd11")
+elseif (ILLUMOS)
+  set(CMAKE_SYSTEM_PROCESSOR "x86_64")
+  set(TOOLCHAIN "x86_64-illumos")
+else()
+  message(FATAL_ERROR "Arch is ${TARGET_ARCH_NAME}. Only armel, arm, arm64, s390x and x86 are supported!")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 endif()
 
 if(DEFINED ENV{TOOLCHAIN})
@@ -123,11 +170,15 @@ if(DEFINED ENV{TOOLCHAIN})
 endif()
 
 # Specify include paths
+<<<<<<< HEAD
 if(TIZEN)
   if(TARGET_ARCH_NAME STREQUAL "arm")
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}/include/c++/)
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}/include/c++/armv7hl-tizen-linux-gnueabihf)
   endif()
+=======
+if(DEFINED TIZEN_TOOLCHAIN)
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   if(TARGET_ARCH_NAME STREQUAL "armel")
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}/include/c++/)
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}/include/c++/armv7l-tizen-linux-gnueabi)
@@ -136,6 +187,7 @@ if(TIZEN)
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib64/gcc/${TIZEN_TOOLCHAIN}/include/c++/)
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib64/gcc/${TIZEN_TOOLCHAIN}/include/c++/aarch64-tizen-linux-gnu)
   endif()
+<<<<<<< HEAD
   if(TARGET_ARCH_NAME STREQUAL "x86")
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}/include/c++/)
     include_directories(SYSTEM ${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}/include/c++/i586-tizen-linux-gnu)
@@ -147,6 +199,11 @@ if(TIZEN)
 endif()
 
 if(ANDROID)
+=======
+endif()
+
+if("$ENV{__DistroRid}" MATCHES "android.*")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     if(TARGET_ARCH_NAME STREQUAL "arm")
         set(ANDROID_ABI armeabi-v7a)
     elseif(TARGET_ARCH_NAME STREQUAL "arm64")
@@ -154,9 +211,13 @@ if(ANDROID)
     endif()
 
     # extract platform number required by the NDK's toolchain
+<<<<<<< HEAD
     file(READ "${CROSS_ROOTFS}/android_platform" RID_FILE_CONTENTS)
     string(REPLACE "RID=" "" ANDROID_RID "${RID_FILE_CONTENTS}")
     string(REGEX REPLACE ".*\\.([0-9]+)-.*" "\\1" ANDROID_PLATFORM "${ANDROID_RID}")
+=======
+    string(REGEX REPLACE ".*\\.([0-9]+)-.*" "\\1" ANDROID_PLATFORM "$ENV{__DistroRid}")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
     set(ANDROID_TOOLCHAIN clang)
     set(FEATURE_EVENT_TRACE 0) # disable event trace as there is no lttng-ust package in termux repository
@@ -165,15 +226,22 @@ if(ANDROID)
 
     # include official NDK toolchain script
     include(${CROSS_ROOTFS}/../build/cmake/android.toolchain.cmake)
+<<<<<<< HEAD
 elseif(FREEBSD)
+=======
+elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     # we cross-compile by instructing clang
     set(CMAKE_C_COMPILER_TARGET ${triple})
     set(CMAKE_CXX_COMPILER_TARGET ${triple})
     set(CMAKE_ASM_COMPILER_TARGET ${triple})
     set(CMAKE_SYSROOT "${CROSS_ROOTFS}")
+<<<<<<< HEAD
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fuse-ld=lld")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fuse-ld=lld")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -fuse-ld=lld")
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 elseif(ILLUMOS)
     set(CMAKE_SYSROOT "${CROSS_ROOTFS}")
 
@@ -205,6 +273,7 @@ elseif(ILLUMOS)
 
     set(CMAKE_C_STANDARD_LIBRARIES "${CMAKE_C_STANDARD_LIBRARIES} -lssp")
     set(CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} -lssp")
+<<<<<<< HEAD
 elseif(HAIKU)
     set(CMAKE_SYSROOT "${CROSS_ROOTFS}")
     set(CMAKE_PROGRAM_PATH "${CMAKE_PROGRAM_PATH};${CROSS_ROOTFS}/cross-tools-x86_64/bin")
@@ -238,6 +307,8 @@ elseif(HAIKU)
 
     # let CMake set up the correct search paths
     include(Platform/Haiku)
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 else()
     set(CMAKE_SYSROOT "${CROSS_ROOTFS}")
 
@@ -254,24 +325,42 @@ function(add_toolchain_linker_flag Flag)
   if (NOT Config STREQUAL "")
     set(CONFIG_SUFFIX "_${Config}")
   endif()
+<<<<<<< HEAD
   set("CMAKE_EXE_LINKER_FLAGS${CONFIG_SUFFIX}_INIT" "${CMAKE_EXE_LINKER_FLAGS${CONFIG_SUFFIX}_INIT} ${Flag}" PARENT_SCOPE)
   set("CMAKE_SHARED_LINKER_FLAGS${CONFIG_SUFFIX}_INIT" "${CMAKE_SHARED_LINKER_FLAGS${CONFIG_SUFFIX}_INIT} ${Flag}" PARENT_SCOPE)
 endfunction()
 
 if(LINUX)
+=======
+  set("CMAKE_EXE_LINKER_FLAGS${CONFIG_SUFFIX}" "${CMAKE_EXE_LINKER_FLAGS${CONFIG_SUFFIX}} ${Flag}" PARENT_SCOPE)
+  set("CMAKE_SHARED_LINKER_FLAGS${CONFIG_SUFFIX}" "${CMAKE_SHARED_LINKER_FLAGS${CONFIG_SUFFIX}} ${Flag}" PARENT_SCOPE)
+endfunction()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   add_toolchain_linker_flag("-Wl,--rpath-link=${CROSS_ROOTFS}/lib/${TOOLCHAIN}")
   add_toolchain_linker_flag("-Wl,--rpath-link=${CROSS_ROOTFS}/usr/lib/${TOOLCHAIN}")
 endif()
 
+<<<<<<< HEAD
 if(TARGET_ARCH_NAME MATCHES "^(arm|armel)$")
   if(TIZEN)
+=======
+if(TARGET_ARCH_NAME STREQUAL "armel")
+  if(DEFINED TIZEN_TOOLCHAIN) # For Tizen only
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     add_toolchain_linker_flag("-B${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}")
     add_toolchain_linker_flag("-L${CROSS_ROOTFS}/lib")
     add_toolchain_linker_flag("-L${CROSS_ROOTFS}/usr/lib")
     add_toolchain_linker_flag("-L${CROSS_ROOTFS}/usr/lib/gcc/${TIZEN_TOOLCHAIN}")
   endif()
+<<<<<<< HEAD
 elseif(TARGET_ARCH_NAME MATCHES "^(arm64|x64)$")
   if(TIZEN)
+=======
+elseif(TARGET_ARCH_NAME STREQUAL "arm64")
+  if(DEFINED TIZEN_TOOLCHAIN) # For Tizen only
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     add_toolchain_linker_flag("-B${CROSS_ROOTFS}/usr/lib64/gcc/${TIZEN_TOOLCHAIN}")
     add_toolchain_linker_flag("-L${CROSS_ROOTFS}/lib64")
     add_toolchain_linker_flag("-L${CROSS_ROOTFS}/usr/lib64")
@@ -282,6 +371,7 @@ elseif(TARGET_ARCH_NAME MATCHES "^(arm64|x64)$")
     add_toolchain_linker_flag("-Wl,--rpath-link=${CROSS_ROOTFS}/usr/lib64/gcc/${TIZEN_TOOLCHAIN}")
   endif()
 elseif(TARGET_ARCH_NAME STREQUAL "x86")
+<<<<<<< HEAD
   if(EXISTS ${CROSS_ROOTFS}/usr/lib/gcc/i586-alpine-linux-musl)
     add_toolchain_linker_flag("--target=${TOOLCHAIN}")
     add_toolchain_linker_flag("-Wl,--rpath-link=${CROSS_ROOTFS}/usr/lib/gcc/${TOOLCHAIN}")
@@ -299,11 +389,21 @@ elseif(ILLUMOS)
 elseif(HAIKU)
   add_toolchain_linker_flag("-lnetwork")
   add_toolchain_linker_flag("-lroot")
+=======
+  add_toolchain_linker_flag(-m32)
+elseif(ILLUMOS)
+  add_toolchain_linker_flag("-L${CROSS_ROOTFS}/lib/amd64")
+  add_toolchain_linker_flag("-L${CROSS_ROOTFS}/usr/amd64/lib")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 endif()
 
 # Specify compile options
 
+<<<<<<< HEAD
 if((TARGET_ARCH_NAME MATCHES "^(arm|arm64|armel|armv6|ppc64le|riscv64|s390x|x64|x86)$" AND NOT ANDROID AND NOT FREEBSD) OR ILLUMOS OR HAIKU)
+=======
+if((TARGET_ARCH_NAME MATCHES "^(arm|armel|arm64|s390x)$" AND NOT "$ENV{__DistroRid}" MATCHES "android.*") OR ILLUMOS)
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   set(CMAKE_C_COMPILER_TARGET ${TOOLCHAIN})
   set(CMAKE_CXX_COMPILER_TARGET ${TOOLCHAIN})
   set(CMAKE_ASM_COMPILER_TARGET ${TOOLCHAIN})
@@ -322,22 +422,33 @@ if(TARGET_ARCH_NAME MATCHES "^(arm|armel)$")
 
   add_definitions (-DCLR_ARM_FPU_CAPABILITY=${CLR_ARM_FPU_CAPABILITY})
 
+<<<<<<< HEAD
   # persist variables across multiple try_compile passes
   list(APPEND CMAKE_TRY_COMPILE_PLATFORM_VARIABLES CLR_ARM_FPU_TYPE CLR_ARM_FPU_CAPABILITY)
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   if(TARGET_ARCH_NAME STREQUAL "armel")
     add_compile_options(-mfloat-abi=softfp)
   endif()
 elseif(TARGET_ARCH_NAME STREQUAL "x86")
+<<<<<<< HEAD
   if(EXISTS ${CROSS_ROOTFS}/usr/lib/gcc/i586-alpine-linux-musl)
     add_compile_options(--target=${TOOLCHAIN})
   endif()
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   add_compile_options(-m32)
   add_compile_options(-Wno-error=unused-command-line-argument)
 endif()
 
+<<<<<<< HEAD
 if(TIZEN)
   if(TARGET_ARCH_NAME MATCHES "^(arm|armel|arm64|x86)$")
+=======
+if(DEFINED TIZEN_TOOLCHAIN)
+  if(TARGET_ARCH_NAME MATCHES "^(armel|arm64)$")
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     add_compile_options(-Wno-deprecated-declarations) # compile-time option
     add_compile_options(-D__extern_always_inline=inline) # compile-time option
   endif()

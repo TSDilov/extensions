@@ -25,8 +25,11 @@ Param(
   [switch] $prepareMachine,
   [string] $runtimeSourceFeed = '',
   [string] $runtimeSourceFeedKey = '',
+<<<<<<< HEAD
   [switch] $excludePrereleaseVS,
   [switch] $nativeToolsOnMachine,
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   [switch] $help,
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$properties
 )
@@ -67,8 +70,11 @@ function Print-Usage() {
   Write-Host "  -prepareMachine         Prepare machine for CI run, clean up processes after build"
   Write-Host "  -warnAsError <value>    Sets warnaserror msbuild parameter ('true' or 'false')"
   Write-Host "  -msbuildEngine <value>  Msbuild engine to use to run build ('dotnet', 'vs', or unspecified)."
+<<<<<<< HEAD
   Write-Host "  -excludePrereleaseVS    Set to exclude build engines in prerelease versions of Visual Studio"
   Write-Host "  -nativeToolsOnMachine   Sets the native tools on machine environment variable (indicating that the script should use native tools on machine)"
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   Write-Host ""
 
   Write-Host "Command line arguments not listed above are passed thru to msbuild."
@@ -148,9 +154,12 @@ try {
     $nodeReuse = $false
   }
 
+<<<<<<< HEAD
   if ($nativeToolsOnMachine) {
     $env:NativeToolsOnMachine = $true
   }
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   if ($restore) {
     InitializeNativeTools
   }

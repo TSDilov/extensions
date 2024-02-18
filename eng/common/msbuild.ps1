@@ -5,8 +5,11 @@ Param(
   [bool] $nodeReuse = $true,
   [switch] $ci,
   [switch] $prepareMachine,
+<<<<<<< HEAD
   [switch] $excludePrereleaseVS,
   [string] $msbuildEngine = $null,
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   [Parameter(ValueFromRemainingArguments=$true)][String[]]$extraArgs
 )
 

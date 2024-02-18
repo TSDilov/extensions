@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Remove the line below if you want to inherit .editorconfig settings from higher directories
 root = true
 
@@ -20,3 +21,35 @@ file_header_template = Licensed to the .NET Foundation under one or more agreeme
 indent_style = space
 indent_size = 2
 tab_width = 2
+=======
+; EditorConfig to support per-solution formatting.
+; Use the EditorConfig VS add-in to make this work.
+; http://editorconfig.org/
+
+; This is the default for the codeline.
+root = true
+
+[*]
+indent_style = space
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+file_header_template = Licensed to the .NET Foundation under one or more agreements.\nThe .NET Foundation licenses this file to you under the MIT license.\nSee the LICENSE file in the project root for more information.
+
+[*.cs]
+indent_size = 4
+dotnet_sort_system_directives_first = true
+
+[*.{xml,config,*proj,nuspec,props,resx,targets,yml,tasks}]
+indent_size = 2
+
+[*.json]
+indent_size = 2
+
+[*.{ps1,psm1}]
+indent_size = 4
+
+[*.sh]
+indent_size = 4
+end_of_line = lf
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

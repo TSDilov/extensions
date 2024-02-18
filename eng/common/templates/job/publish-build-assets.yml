@@ -23,6 +23,7 @@ parameters:
   # Optional: whether the build's artifacts will be published using release pipelines or direct feed publishing
   publishUsingPipelines: false
 
+<<<<<<< HEAD
   # Optional: whether the build's artifacts will be published using release pipelines or direct feed publishing
   publishAssetsImmediately: false
 
@@ -30,10 +31,13 @@ parameters:
 
   signingValidationAdditionalParameters: ''
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 jobs:
 - job: Asset_Registry_Publish
 
   dependsOn: ${{ parameters.dependsOn }}
+<<<<<<< HEAD
   timeoutInMinutes: 150
 
   ${{ if eq(parameters.publishAssetsImmediately, 'true') }}:
@@ -60,6 +64,25 @@ jobs:
     ${{ if ne(variables['System.TeamProject'], 'DevDiv') }}:
       name: NetCore1ESPool-Publishing-Internal
       demands: ImageOverride -equals windows.vs2019.amd64
+=======
+
+  displayName: Publish to Build Asset Registry
+
+  pool: ${{ parameters.pool }}
+
+  variables:
+  - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+    - name: _BuildConfig
+      value: ${{ parameters.configuration }}
+    - group: Publish-Build-Assets
+    - group: AzureDevOps-Artifact-Feeds-Pats
+    # Skip component governance and codesign validation for SDL. These jobs
+    # create no content.
+    - name: skipComponentGovernanceDetection
+      value: true
+    - name: runCodesignValidationInjection
+      value: false
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
   steps:
   - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
@@ -68,11 +91,25 @@ jobs:
       inputs:
         artifactName: AssetManifests
         downloadPath: '$(Build.StagingDirectory)/Download'
+<<<<<<< HEAD
         checkDownloadedFiles: true
       condition: ${{ parameters.condition }}
       continueOnError: ${{ parameters.continueOnError }}
 
     - task: NuGetAuthenticate@1
+=======
+      condition: ${{ parameters.condition }}
+      continueOnError: ${{ parameters.continueOnError }}
+    
+    - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+      - task: NuGetAuthenticate@0
+
+      - task: PowerShell@2 
+        displayName: Enable cross-org NuGet feed authentication 
+        inputs: 
+          filePath: $(Build.SourcesDirectory)/eng/common/enable-cross-org-publishing.ps1 
+          arguments: -token $(dn-bot-all-orgs-artifact-feeds-rw) 
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
     - task: PowerShell@2
       displayName: Publish Build Assets
@@ -81,12 +118,22 @@ jobs:
         arguments: -task PublishBuildAssets -restore -msbuildEngine dotnet
           /p:ManifestsPath='$(Build.StagingDirectory)/Download/AssetManifests'
           /p:BuildAssetRegistryToken=$(MaestroAccessToken)
+<<<<<<< HEAD
           /p:MaestroApiEndpoint=https://maestro.dot.net
           /p:PublishUsingPipelines=${{ parameters.publishUsingPipelines }}
           /p:OfficialBuildId=$(Build.BuildNumber)
       condition: ${{ parameters.condition }}
       continueOnError: ${{ parameters.continueOnError }}
 
+=======
+          /p:MaestroApiEndpoint=https://maestro-prod.westus2.cloudapp.azure.com
+          /p:PublishUsingPipelines=${{ parameters.publishUsingPipelines }}
+          /p:Configuration=$(_BuildConfig)
+          /p:OfficialBuildId=$(Build.BuildNumber)
+      condition: ${{ parameters.condition }}
+      continueOnError: ${{ parameters.continueOnError }}
+    
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     - task: powershell@2
       displayName: Create ReleaseConfigs Artifact
       inputs:
@@ -95,13 +142,18 @@ jobs:
           Add-Content -Path "$(Build.StagingDirectory)/ReleaseConfigs.txt" -Value $(BARBuildId)
           Add-Content -Path "$(Build.StagingDirectory)/ReleaseConfigs.txt" -Value "$(DefaultChannels)"
           Add-Content -Path "$(Build.StagingDirectory)/ReleaseConfigs.txt" -Value $(IsStableBuild)
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     - task: PublishBuildArtifacts@1
       displayName: Publish ReleaseConfigs Artifact
       inputs:
         PathtoPublish: '$(Build.StagingDirectory)/ReleaseConfigs.txt'
         PublishLocation: Container
         ArtifactName: ReleaseConfigs
+<<<<<<< HEAD
 
     - task: powershell@2
       displayName: Check if SymbolPublishingExclusionsFile.txt exists
@@ -149,3 +201,10 @@ jobs:
       - template: /eng/common/templates/steps/publish-logs.yml
         parameters:
           JobLabel: 'Publish_Artifacts_Logs'
+=======
+    
+    - ${{ if eq(parameters.enablePublishBuildArtifacts, 'true') }}:
+      - template: /eng/common/templates/steps/publish-logs.yml
+        parameters:
+          JobLabel: 'Publish_Artifacts_Logs'     
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

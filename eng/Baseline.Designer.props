@@ -1,0 +1,34 @@
+﻿<!-- Auto generated. Do not edit manually, use eng/tools/BaselineGenerator/ to recreate. -->
+<Project>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <ExtensionsBaselineVersion>5.0.0</ExtensionsBaselineVersion>
+  </PropertyGroup>
+  <!-- Package: Microsoft.Extensions.Caching.SqlServer-->
+  <PropertyGroup Condition=" '$(PackageId)' == 'Microsoft.Extensions.Caching.SqlServer' ">
+    <BaselinePackageVersion>5.0.0</BaselinePackageVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(PackageId)' == 'Microsoft.Extensions.Caching.SqlServer' AND '$(TargetFramework)' == 'netstandard2.0' ">
+    <BaselinePackageReference Include="Microsoft.Data.SqlClient" Version="[1.0.19239.1, )" />
+    <BaselinePackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[5.0.0, )" />
+    <BaselinePackageReference Include="Microsoft.Extensions.Options" Version="[5.0.0, )" />
+  </ItemGroup>
+  <!-- Package: Microsoft.Extensions.Caching.StackExchangeRedis-->
+  <PropertyGroup Condition=" '$(PackageId)' == 'Microsoft.Extensions.Caching.StackExchangeRedis' ">
+    <BaselinePackageVersion>5.0.0</BaselinePackageVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(PackageId)' == 'Microsoft.Extensions.Caching.StackExchangeRedis' AND '$(TargetFramework)' == 'netstandard2.0' ">
+    <BaselinePackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="[5.0.0, )" />
+    <BaselinePackageReference Include="Microsoft.Extensions.Options" Version="[5.0.0, )" />
+    <BaselinePackageReference Include="StackExchange.Redis" Version="[2.0.593, )" />
+  </ItemGroup>
+  <!-- Package: Microsoft.Extensions.Http.Polly-->
+  <PropertyGroup Condition=" '$(PackageId)' == 'Microsoft.Extensions.Http.Polly' ">
+    <BaselinePackageVersion>5.0.0</BaselinePackageVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(PackageId)' == 'Microsoft.Extensions.Http.Polly' AND '$(TargetFramework)' == 'netstandard2.0' ">
+    <BaselinePackageReference Include="Microsoft.Extensions.Http" Version="[5.0.0, )" />
+    <BaselinePackageReference Include="Polly" Version="[7.1.0, )" />
+    <BaselinePackageReference Include="Polly.Extensions.Http" Version="[3.0.0, )" />
+  </ItemGroup>
+</Project>

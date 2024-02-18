@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!-- This file gets automatically imported by Arcade infrastructure when calling the build scripts -->
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   
@@ -13,3 +14,10 @@
     <ProjectToBuild Condition="'$(DirectoryToBuild)' == ''" Include="$(MSBuildThisFileDirectory)build.proj" />
   </ItemGroup>
 </Project>
+=======
+<Project>
+  <ItemGroup>
+    <ProjectToBuild Include="$(RepoRoot)src\**\*.csproj" Condition="'$(BuildCSharp)' != 'false'"/>
+  </ItemGroup>
+</Project>
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

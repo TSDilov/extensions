@@ -2,6 +2,7 @@ parameters:
   enable: 'false'                                             # Whether the SDL validation job should execute or not
   overrideParameters: ''                                       # Optional: to override values for parameters.
   additionalParameters: ''                                     # Optional: parameters that need user specific values eg: '-SourceToolsList @("abc","def") -ArtifactToolsList @("ghi","jkl")'
+<<<<<<< HEAD
   # Optional: if specified, restore and use this version of Guardian instead of the default.
   overrideGuardianVersion: ''
   # Optional: if true, publish the '.gdn' folder as a pipeline artifact. This can help with in-depth
@@ -11,29 +12,39 @@ parameters:
   # parameters rather than relying on YAML. It may be better to use a local script, because you can
   # reproduce results locally without piecing together a command based on the YAML.
   executeAllSdlToolsScript: 'eng/common/sdl/execute-all-sdl-tools.ps1'
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   # There is some sort of bug (has been reported) in Azure DevOps where if this parameter is named
   # 'continueOnError', the parameter value is not correctly picked up.
   # This can also be remedied by the caller (post-build.yml) if it does not use a nested parameter
   sdlContinueOnError: false                                    # optional: determines whether to continue the build if the step errors;
+<<<<<<< HEAD
   # optional: determines if build artifacts should be downloaded.
   downloadArtifacts: true
   # optional: determines if this job should search the directory of downloaded artifacts for
   # 'tar.gz' and 'zip' archive files and extract them before running SDL validation tasks.
   extractArchiveArtifacts: false
+=======
+  downloadArtifacts: true                                      # optional: determines if the artifacts should be dowloaded
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   dependsOn: ''                                                # Optional: dependencies of the job
   artifactNames: ''                                            # Optional: patterns supplied to DownloadBuildArtifacts
                                                                # Usage:
                                                                #  artifactNames:
                                                                #    - 'BlobArtifacts'
                                                                #    - 'Artifacts_Windows_NT_Release'
+<<<<<<< HEAD
   # Optional: download a list of pipeline artifacts. 'downloadArtifacts' controls build artifacts,
   # not pipeline artifacts, so doesn't affect the use of this parameter.
   pipelineArtifactNames: []
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
 jobs:
 - job: Run_SDL
   dependsOn: ${{ parameters.dependsOn }}
   displayName: Run SDL tool
+<<<<<<< HEAD
   condition: and(succeededOrFailed(), eq( ${{ parameters.enable }}, 'true'))
   variables:
     - group: DotNet-VSTS-Bot
@@ -64,6 +75,22 @@ jobs:
   - ${{ if not(and(parameters.AzDOProjectName, parameters.AzDOPipelineId, parameters.AzDOBuildId)) }}:
     - template: /eng/common/templates/post-build/setup-maestro-vars.yml
 
+=======
+  condition: eq( ${{ parameters.enable }}, 'true')
+  variables:
+    - group: DotNet-VSTS-Bot
+    - name: AzDOProjectName
+      value: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.AzDOProjectName'] ]
+    - name: AzDOPipelineId
+      value: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.AzDOPipelineId'] ]
+    - name: AzDOBuildId
+      value: $[ dependencies.setupMaestroVars.outputs['setReleaseVars.AzDOBuildId'] ]
+  pool:
+    name: Hosted VS2017
+  steps:
+  - checkout: self
+    clean: true
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   - ${{ if ne(parameters.downloadArtifacts, 'false')}}:
     - ${{ if ne(parameters.artifactNames, '') }}:
       - ${{ each artifactName in parameters.artifactNames }}:
@@ -77,7 +104,10 @@ jobs:
             buildId: $(AzDOBuildId)
             artifactName: ${{ artifactName }}
             downloadPath: $(Build.ArtifactStagingDirectory)\artifacts
+<<<<<<< HEAD
             checkDownloadedFiles: true
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     - ${{ if eq(parameters.artifactNames, '') }}:
       - task: DownloadBuildArtifacts@0
         displayName: Download Build Artifacts
@@ -90,6 +120,7 @@ jobs:
           downloadType: specific files
           itemPattern: "**"
           downloadPath: $(Build.ArtifactStagingDirectory)\artifacts
+<<<<<<< HEAD
           checkDownloadedFiles: true
 
   - ${{ each artifactName in parameters.pipelineArtifactNames }}:
@@ -110,17 +141,23 @@ jobs:
     displayName: Trim the version from the NuGet packages
     continueOnError: ${{ parameters.sdlContinueOnError }}
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   - powershell: eng/common/sdl/extract-artifact-packages.ps1
       -InputPath $(Build.ArtifactStagingDirectory)\artifacts\BlobArtifacts
       -ExtractPath $(Build.ArtifactStagingDirectory)\artifacts\BlobArtifacts
     displayName: Extract Blob Artifacts
     continueOnError: ${{ parameters.sdlContinueOnError }}
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   - powershell: eng/common/sdl/extract-artifact-packages.ps1
       -InputPath $(Build.ArtifactStagingDirectory)\artifacts\PackageArtifacts
       -ExtractPath $(Build.ArtifactStagingDirectory)\artifacts\PackageArtifacts
     displayName: Extract Package Artifacts
     continueOnError: ${{ parameters.sdlContinueOnError }}
+<<<<<<< HEAD
 
   - ${{ if ne(parameters.extractArchiveArtifacts, 'false') }}:
     - powershell: eng/common/sdl/extract-artifact-archives.ps1
@@ -137,3 +174,27 @@ jobs:
       additionalParameters: ${{ parameters.additionalParameters }}
       publishGuardianDirectoryToPipeline: ${{ parameters.publishGuardianDirectoryToPipeline }}
       sdlContinueOnError: ${{ parameters.sdlContinueOnError }}
+=======
+  - task: NuGetToolInstaller@1
+    displayName: 'Install NuGet.exe'
+  - task: NuGetCommand@2
+    displayName: 'Install Guardian'
+    inputs:
+      restoreSolution: $(Build.SourcesDirectory)\eng\common\sdl\packages.config
+      feedsToUse: config
+      nugetConfigPath: $(Build.SourcesDirectory)\eng\common\sdl\NuGet.config
+      externalFeedCredentials: GuardianConnect
+      restoreDirectory: $(Build.SourcesDirectory)\.packages
+  - ${{ if ne(parameters.overrideParameters, '') }}:
+    - powershell: eng/common/sdl/execute-all-sdl-tools.ps1 ${{ parameters.overrideParameters }}
+      displayName: Execute SDL
+      continueOnError: ${{ parameters.sdlContinueOnError }}
+  - ${{ if eq(parameters.overrideParameters, '') }}:
+    - powershell: eng/common/sdl/execute-all-sdl-tools.ps1
+        -GuardianPackageName Microsoft.Guardian.Cli.0.53.3
+        -NugetPackageDirectory $(Build.SourcesDirectory)\.packages
+        -AzureDevOpsAccessToken $(dn-bot-dotnet-build-rw-code-rw)
+        ${{ parameters.additionalParameters }}
+      displayName: Execute SDL
+      continueOnError: ${{ parameters.sdlContinueOnError }}
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

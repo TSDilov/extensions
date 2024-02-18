@@ -10,7 +10,11 @@ Param(
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version 2.0
 $disableConfigureToolsetImport = $true
+<<<<<<< HEAD
 $global:LASTEXITCODE = 0
+=======
+$LASTEXITCODE = 0
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
 # `tools.ps1` checks $ci to perform some actions. Since the SDL
 # scripts don't necessarily execute in the same agent that run the
@@ -46,6 +50,10 @@ try {
     Write-PipelineTelemetryError -Force -Category 'Build' -Message "Guardian baseline failed with exit code $LASTEXITCODE."
     ExitWithExitCode $LASTEXITCODE
   }
+<<<<<<< HEAD
+=======
+  & $(Join-Path $PSScriptRoot 'push-gdn.ps1') -Repository $Repository -BranchName $BranchName -GdnFolder $gdnFolder -AzureDevOpsAccessToken $AzureDevOpsAccessToken -PushReason 'Initialize gdn folder'
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   ExitWithExitCode 0
 }
 catch {

@@ -19,9 +19,12 @@ usage()
   echo "Actions:"
   echo "  --restore                  Restore dependencies (short: -r)"
   echo "  --build                    Build solution (short: -b)"
+<<<<<<< HEAD
   echo "  --sourceBuild              Source-build the solution (short: -sb)"
   echo "                             Will additionally trigger the following actions: --restore, --build, --pack"
   echo "                             If --configuration is not set explicitly, will also set it to 'Release'"
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   echo "  --rebuild                  Rebuild solution"
   echo "  --test                     Run all unit tests in the solution (short: -t)"
   echo "  --integrationTest          Run all integration tests in the solution"
@@ -58,7 +61,10 @@ scriptroot="$( cd -P "$( dirname "$source" )" && pwd )"
 
 restore=false
 build=false
+<<<<<<< HEAD
 source_build=false
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 rebuild=false
 test=false
 integration_test=false
@@ -77,7 +83,11 @@ exclude_ci_binary_log=false
 pipelines_log=false
 
 projects=''
+<<<<<<< HEAD
 configuration=''
+=======
+configuration='Debug'
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 prepare_machine=false
 verbosity='minimal'
 runtime_source_feed=''
@@ -123,12 +133,15 @@ while [[ $# > 0 ]]; do
     -pack)
       pack=true
       ;;
+<<<<<<< HEAD
     -sourcebuild|-sb)
       build=true
       source_build=true
       restore=true
       pack=true
       ;;
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     -test|-t)
       test=true
       ;;
@@ -178,10 +191,13 @@ while [[ $# > 0 ]]; do
   shift
 done
 
+<<<<<<< HEAD
 if [[ -z "$configuration" ]]; then
   if [[ "$source_build" = true ]]; then configuration="Release"; else configuration="Debug"; fi
 fi
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 if [[ "$ci" == true ]]; then
   pipelines_log=true
   node_reuse=false
@@ -219,7 +235,10 @@ function Build {
     /p:RepoRoot="$repo_root" \
     /p:Restore=$restore \
     /p:Build=$build \
+<<<<<<< HEAD
     /p:ArcadeBuildFromSource=$source_build \
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     /p:Rebuild=$rebuild \
     /p:Test=$test \
     /p:Pack=$pack \

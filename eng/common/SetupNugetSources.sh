@@ -105,6 +105,7 @@ if [ "$?" == "0" ]; then
     PackageSources+=('dotnet3.1-internal-transport')
 fi
 
+<<<<<<< HEAD
 DotNetVersions=('5' '6' '7' '8')
 
 for DotNetVersion in ${DotNetVersions[@]} ; do
@@ -132,6 +133,31 @@ for DotNetVersion in ${DotNetVersions[@]} ; do
         PackageSources+=("$FeedPrefix-internal-transport")
     fi
 done
+=======
+# Ensure dotnet5-internal and dotnet5-internal-transport are in the packageSources if the public dotnet5 feeds are present
+grep -i "<add key=\"dotnet5\"" $ConfigFile
+if [ "$?" == "0" ]; then
+    grep -i "<add key=\"dotnet5-internal\"" $ConfigFile
+    if [ "$?" != "0" ]; then
+        echo "Adding dotnet5-internal to the packageSources."
+        PackageSourcesNodeFooter="</packageSources>"
+        PackageSourceTemplate="${TB}<add key=\"dotnet5-internal\" value=\"https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet5-internal/nuget/v2\" />"
+
+        sed -i.bak "s|$PackageSourcesNodeFooter|$PackageSourceTemplate${NL}$PackageSourcesNodeFooter|" $ConfigFile
+    fi
+    PackageSources+=('dotnet5-internal')
+
+    grep -i "<add key=\"dotnet5-internal-transport\">" $ConfigFile
+    if [ "$?" != "0" ]; then
+        echo "Adding dotnet5-internal-transport to the packageSources."
+        PackageSourcesNodeFooter="</packageSources>"
+        PackageSourceTemplate="${TB}<add key=\"dotnet5-internal-transport\" value=\"https://pkgs.dev.azure.com/dnceng/internal/_packaging/dotnet5-internal-transport/nuget/v2\" />"
+
+        sed -i.bak "s|$PackageSourcesNodeFooter|$PackageSourceTemplate${NL}$PackageSourcesNodeFooter|" $ConfigFile
+    fi
+    PackageSources+=('dotnet5-internal-transport')
+fi
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
 # I want things split line by line
 PrevIFS=$IFS

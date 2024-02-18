@@ -107,12 +107,20 @@ __AndroidPackages+=" liblzma"
 __AndroidPackages+=" krb5"
 __AndroidPackages+=" openssl"
 
+<<<<<<< HEAD
 for path in $(wget -qO- https://packages.termux.dev/termux-main-21/dists/stable/main/binary-$__AndroidArch/Packages |\
+=======
+for path in $(wget -qO- http://termux.net/dists/stable/main/binary-$__AndroidArch/Packages |\
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     grep -A15 "Package: \(${__AndroidPackages// /\\|}\)" | grep -v "static\|tool" | grep Filename); do
 
     if [[ "$path" != "Filename:" ]]; then
         echo "Working on: $path"
+<<<<<<< HEAD
         wget -qO- https://packages.termux.dev/termux-main-21/$path | dpkg -x - "$__TmpDir"
+=======
+        wget -qO- http://termux.net/$path | dpkg -x - "$__TmpDir"
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
     fi
 done
 

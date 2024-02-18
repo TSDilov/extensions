@@ -27,6 +27,7 @@ parameters:
   # Optional: Override automatically derived dependsOn value for "publish build assets" job
   publishBuildAssetsDependsOn: ''
 
+<<<<<<< HEAD
   # Optional: Publish the assets as soon as the publish to BAR stage is complete, rather doing so in a separate stage.
   publishAssetsImmediately: false
 
@@ -34,6 +35,8 @@ parameters:
   artifactsPublishingAdditionalParameters: ''
   signingValidationAdditionalParameters: ''
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   # Optional: should run as a public build even in the internal project
   #           if 'true', the build won't run any of the internal only steps, even if it is running in non-public projects.
   runAsPublic: false
@@ -75,6 +78,10 @@ jobs:
         ${{ parameter.key }}: ${{ parameter.value }}
 
 - ${{ if and(eq(parameters.runAsPublic, 'false'), ne(variables['System.TeamProject'], 'public'), notin(variables['Build.Reason'], 'PullRequest')) }}:
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   - ${{ if or(eq(parameters.enablePublishBuildAssets, true), eq(parameters.artifacts.publish.manifests, 'true'), ne(parameters.artifacts.publish.manifests, '')) }}:
     - template: ../job/publish-build-assets.yml
       parameters:
@@ -88,6 +95,7 @@ jobs:
             - ${{ job.job }}
         - ${{ if eq(parameters.enableSourceBuild, true) }}:
           - Source_Build_Complete
+<<<<<<< HEAD
 
         runAsPublic: ${{ parameters.runAsPublic }}
         publishUsingPipelines: ${{ parameters.enablePublishUsingPipelines }}
@@ -95,3 +103,20 @@ jobs:
         enablePublishBuildArtifacts: ${{ parameters.enablePublishBuildArtifacts }}
         artifactsPublishingAdditionalParameters: ${{ parameters.artifactsPublishingAdditionalParameters }}
         signingValidationAdditionalParameters: ${{ parameters.signingValidationAdditionalParameters }}
+=======
+        pool:
+          vmImage: vs2017-win2016
+        runAsPublic: ${{ parameters.runAsPublic }}
+        publishUsingPipelines: ${{ parameters.enablePublishUsingPipelines }}
+        enablePublishBuildArtifacts: ${{ parameters.enablePublishBuildArtifacts }}
+
+  - ${{ if eq(parameters.graphFileGeneration.enabled, true) }}:
+    - template: ../job/generate-graph-files.yml
+      parameters:
+        continueOnError: ${{ parameters.continueOnError }}
+        includeToolset: ${{ parameters.graphFileGeneration.includeToolset }}
+        dependsOn:
+          - Asset_Registry_Publish
+        pool:
+          vmImage: vs2017-win2016
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b

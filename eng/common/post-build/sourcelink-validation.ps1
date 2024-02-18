@@ -14,19 +14,26 @@ param(
 $global:RepoFiles = @{}
 
 # Maximum number of jobs to run in parallel
+<<<<<<< HEAD
 $MaxParallelJobs = 16
 
 $MaxRetries = 5
 $RetryWaitTimeInSeconds = 30
+=======
+$MaxParallelJobs = 6
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 
 # Wait time between check for system load
 $SecondsBetweenLoadChecks = 10
 
+<<<<<<< HEAD
 if (!$InputPath -or !(Test-Path $InputPath)){
   Write-Host "No files to validate."
   ExitWithExitCode 0
 }
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
 $ValidatePackage = {
   param( 
     [string] $PackagePath                                 # Full path to a Symbols.NuGet package
@@ -37,10 +44,14 @@ $ValidatePackage = {
   # Ensure input file exist
   if (!(Test-Path $PackagePath)) {
     Write-Host "Input file does not exist: $PackagePath"
+<<<<<<< HEAD
     return [pscustomobject]@{
       result = 1
       packagePath = $PackagePath
     }
+=======
+    return 1
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   }
 
   # Extensions for which we'll look for SourceLink information
@@ -70,10 +81,14 @@ $ValidatePackage = {
 
           # We ignore resource DLLs
           if ($FileName.EndsWith('.resources.dll')) {
+<<<<<<< HEAD
             return [pscustomobject]@{
               result = 0
               packagePath = $PackagePath
             }
+=======
+            return
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
           }
 
           [System.IO.Compression.ZipFileExtensions]::ExtractToFile($_, $TargetFile, $true)
@@ -105,6 +120,7 @@ $ValidatePackage = {
                     $Status = 200
                     $Cache = $using:RepoFiles
 
+<<<<<<< HEAD
                     $attempts = 0
 
                     while ($attempts -lt $using:MaxRetries) {
@@ -158,6 +174,38 @@ $ValidatePackage = {
                       else {
                         break
                       }
+=======
+                    if ( !($Cache.ContainsKey($FilePath)) ) {
+                      try {
+                        $Uri = $Link -as [System.URI]
+                      
+                        # Only GitHub links are valid
+                        if ($Uri.AbsoluteURI -ne $null -and ($Uri.Host -match 'github' -or $Uri.Host -match 'githubusercontent')) {
+                          $Status = (Invoke-WebRequest -Uri $Link -UseBasicParsing -Method HEAD -TimeoutSec 5).StatusCode
+                        }
+                        else {
+                          $Status = 0
+                        }
+                      }
+                      catch {
+                        write-host $_
+                        $Status = 0
+                      }
+                    }
+
+                    if ($Status -ne 200) {
+                      if ($NumFailedLinks -eq 0) {
+                        if ($FailedFiles.Value -eq 0) {
+                          Write-Host
+                        }
+
+                        Write-Host "`tFile $RealPath has broken links:"
+                      }
+
+                      Write-Host "`t`tFailed to retrieve $Link"
+
+                      $NumFailedLinks++
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
                     }
                   }
               }
@@ -173,7 +221,11 @@ $ValidatePackage = {
         }
   }
   catch {
+<<<<<<< HEAD
     Write-Host $_
+=======
+  
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   }
   finally {
     $zip.Dispose() 
@@ -257,7 +309,10 @@ function ValidateSourceLinkLinks {
   # Process each NuGet package in parallel
   Get-ChildItem "$InputPath\*.symbols.nupkg" |
     ForEach-Object {
+<<<<<<< HEAD
       Write-Host "Starting $($_.FullName)"
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
       Start-Job -ScriptBlock $ValidatePackage -ArgumentList $_.FullName | Out-Null
       $NumJobs = @(Get-Job -State 'Running').Count
       
@@ -305,10 +360,13 @@ function InstallSourcelinkCli {
 try {
   InstallSourcelinkCli
 
+<<<<<<< HEAD
   foreach ($Job in @(Get-Job)) {
     Remove-Job -Id $Job.Id
   }
 
+=======
+>>>>>>> 8d8547bffdfbb7a658721bec13b9269774ab215b
   ValidateSourceLinkLinks 
 }
 catch {
